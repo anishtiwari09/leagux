@@ -79,9 +79,9 @@ export default function ArticleList({ articles }) {
     setLoading(false);
   };
   useEffect(() => {
-    setIsOffline(!window.navigator.onLine);
-    if (!window.navigator.onLine) {
+    if (window.navigator.onLine === false) {
       handleGettingCachingData();
+      setIsOffline(true);
     }
     window.addEventListener("online", () => {
       setIsOffline(false);
