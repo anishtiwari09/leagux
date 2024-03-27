@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { useRef } from "react";
+import { MESSAGE_TYPE } from "../utility/Constant";
 export default function NewsArticle({ article, index, onClick, isOffline }) {
   const imageRef = useRef();
 
@@ -43,7 +44,9 @@ export default function NewsArticle({ article, index, onClick, isOffline }) {
       ) : article?.isOffline ? (
         <button
           className="border border-spacing-1 w-fit p-2 rounded-md bg-blue-500 text-white ml-auto"
-          // onClick={() => onClick(index)}
+          onClick={() =>
+            onClick(index, imageRef, MESSAGE_TYPE.removeFromOffline)
+          }
         >
           Remove from offline Reading
         </button>

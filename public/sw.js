@@ -30,12 +30,6 @@ self.addEventListener("fetch", (evt) => {
           });
         })
         .catch(async (e) => {
-          if (!cacheRes && requestType == "image") {
-            let cache = await caches.open(dynamicCache);
-            let cachesKeys = await cache.keys();
-            for (let item of cachesKeys) {
-            }
-          }
           return cacheRes;
         });
     })
@@ -49,6 +43,7 @@ self.addEventListener("message", (event) => {
 
   let { type, data, id, imageUrl } = message;
   id = id.replaceAll(":", "_");
+  console.log(type);
   if (type === "addToOffline") {
     caches.match(id).then((res) => {
       if (!res) {
@@ -58,7 +53,6 @@ self.addEventListener("message", (event) => {
               caches.open(dynamicCache).then((cache) => {
                 fetch(imageUrl)
                   .then((fetchRes) => {
-                    console.log(imageUrl);
                     let imageRequest = new Request(imageUrl);
                     cache
                       .put(imageRequest, fetchRes.clone())
@@ -73,6 +67,26 @@ self.addEventListener("message", (event) => {
         });
       }
     });
+  } else if (type === "removeFromOffline") {
+    removeFromOffline(id, imageUrl);
   }
 });
+async function removeFromOffline(id, imageUrl) {
+  try {
+    console.log(id);
+    let cache = await caches.open(offlinePost);
+
+    let res = await cache.delete(id);
+    console.log(res);
+  } catch (e) {
+    console.log(e);
+  }
+  try {
+    let cache = await caches.open(dynamicCache);
+    let res = await cache.delete(imageUrl);
+    console.log(res);
+  } catch (e) {
+    console.log(e);
+  }
+}
 // self.addEventListener("removeFromOffline", (evt) => {});

@@ -9,8 +9,22 @@ export default function ArticleList({ articles }) {
   const [cachingData, setCachingData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(true);
-  const handleMarksForOfllineReading = (i, imageRef) => {
-    console.log(imageRef);
+  const handleRemoveFromOffline = (i, imageRef) => {
+    let article = allArticles[i];
+    article.localImage = imageRef?.current.src;
+    article.localImageUrl = imageRef?.current?.src;
+    navigator.serviceWorker.controller.postMessage({
+      type: MESSAGE_TYPE.removeFromOffline,
+      id: article.title,
+      imageUrl: imageRef?.current?.src || "",
+    });
+    article.isOffline = false;
+    setAllArticles([...allArticles]);
+  };
+  const handleMarksForOfllineReading = (i, imageRef, from) => {
+    if (from === MESSAGE_TYPE.removeFromOffline) {
+      return handleRemoveFromOffline(i, imageRef);
+    }
     let article = allArticles[i];
     article.localImage = imageRef?.current.src;
     article.localImageUrl = imageRef?.current?.src;
